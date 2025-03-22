@@ -1,10 +1,41 @@
-"use client"; 
+"use client";
 
-import { useParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from ".././../../app/firebaseApp";
+import { PostProps } from ".././../../app/page";
+
+import {IoIosArrowBack} from "react-icons/io"
+
+import PostBox from "../../../../components/post/PostBox"; 
+import Loader from './../../../../components/loader/Loader';
 
 export default function PostDetail() {
-  const {id} = useParams();
+  const router = useRouter();
+  const params = useParams();
+  const [post, setPost] = useState<PostProps | null>(null);
+
+  const getPost = useCallback(async () => {
+    if (params.id) {
+      const docRef = doc(db, "posts", params.id as string);
+      const docSnap = await getDoc(docRef);
+      setPost({ ...(docSnap.data() as PostProps), id: docSnap.id });
+    }
+  }, [params.id]);
+
+  useEffect(() => {
+    if (params.id) getPost();
+  }, [getPost, params.id]);
+
   return (
-    <h1>게시글 상세 페이지 : {id}</h1>
-  )
+    <div className="post">
+      <div className="post__header">
+        <button type="button" onClick={() => router.back()}>
+          <IoIosArrowBack/>
+        </button>
+      </div>
+      {post ? <PostBox post={post} /> : <Loader />}
+    </div>
+  );
 }

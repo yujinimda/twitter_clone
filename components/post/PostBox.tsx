@@ -51,7 +51,7 @@ export default function Postbox({post}: PostBoxProps) {
       <button
         type="button"
         className='post__edit'
-        onClick={() => router.push(`/posts/edit/${post.id}`)}
+        onClick={() => router.push(`/posts/${post.id}/edit`)}
       >
         Edit
       </button>

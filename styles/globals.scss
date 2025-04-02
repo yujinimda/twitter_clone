@@ -9,6 +9,7 @@ $danger:#dc2626;
 $dangerDark:#8f10108e;
 $gray:#6b7280;
 $grayDark:#484949;
+$backgroundLight: #263340;
 
 $font :  Arial, Helvetica, sans-serif;
 
@@ -89,7 +90,7 @@ input {
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     background-color: transparent;
 
     button {
@@ -108,6 +109,27 @@ input {
 
 //home 레이아웃
 .home {
+
+  &__search-div {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__search {
+    @extend .post-form__input;
+    background-color: $backgroundLight;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    padding: 12px;
+    width: 90% !important;
+    font-size: 15px;
+    font-weight: 600;
+
+    &:focus {
+      border: 1px solid $primaryColor;
+      background-color: $activeBg;
+    }
+  }
 
   &__title {
     background-color: transparent;
@@ -141,6 +163,85 @@ input {
 }
 
 .post-form {
+
+  &__profile {
+    padding: 16px;
+
+    .post-form__input {
+      border-bottom: 1px solid $gray;
+      padding: 8px 2px;
+      font-size: 16px;
+      width: 100%;
+      margin-bottom: 20px;
+
+      &:active,
+      &:focus {
+        border-bottom: 1px solid white;
+      }
+    }
+  }
+
+  &__image-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__attachment {
+    display: flex;
+    align-items: end;
+    gap: 16px;
+  }
+
+  &__clear-btn {
+    @extend .button;
+    padding: 0.2rem 0.8rem;
+    background-color: $danger;
+
+    &:hover,
+    &:focus {
+      background-color: $dangerDark;
+    }
+  }
+  &__input {
+    font-family: $font;
+    padding: 8px;
+    border: none;
+    resize: none;
+    outline: none;
+    margin-top: 8px;
+    width: calc(100% - 32px);
+  }
+
+  &__hashtags {
+    padding: 16px;
+    border-bottom: 1px solid $border;
+
+    &-outputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 1px;
+      align-items: center;
+    }
+
+    &-tag {
+      font-size: 14px;
+      border: 1px solid $primaryColor;
+      color: $primaryColor;
+      border-radius: 10px;
+      padding: 2px 8px;
+      margin-right: 6px;
+      cursor: pointer;
+
+      &:hover,
+      &:focus {
+        color: $activeBorder;
+        border: 1px solid $activeBorder;
+      }
+    }
+  }
+
+
   &__textarea {
     font-family: $font;
     min-height: 120px;
@@ -165,6 +266,7 @@ input {
     padding: 0.75rem 1rem;
     justify-content: space-between;
     border-bottom: 1px solid $border;
+    align-items: center;
 
     .post-form__file {
       display: flex;
@@ -189,6 +291,24 @@ input {
 
 //Post 레이아웃
 .post {
+
+  &__image-div {
+    padding: 16px;
+  }
+
+  &__header {
+    button {
+      border: none;
+      padding: 16px;
+    }
+
+    &-btn  {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+  }
+
   &__no-posts {
     padding: 16px;
 

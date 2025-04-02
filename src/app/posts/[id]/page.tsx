@@ -31,8 +31,8 @@ export default function PostDetail() {
   return (
     <div className="post">
       <div className="post__header">
-        <button type="button" onClick={() => router.back()}>
-          <IoIosArrowBack/>
+        <button type="button" onClick={() => router.push("/")}>
+          <IoIosArrowBack className="post__header-btn"/>
         </button>
       </div>
       {post ? <PostBox post={post} /> : <Loader />}

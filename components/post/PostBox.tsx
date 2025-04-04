@@ -11,6 +11,7 @@ import { db, storage } from "@/app/firebaseApp";
 import { ref, deleteObject } from "firebase/storage";
 import AuthContext from "@/context/AuthContext";
 import { useContext } from "react";
+import FollowingBox from "../following/FollowingBox";
 
 
 interface PostBoxProps {
@@ -61,8 +62,7 @@ export default function Postbox({post}: PostBoxProps) {
     <div
     className='post__box'
     key={post?.id}
-    onClick={() => router.push(`/posts/${post.id}`)}
-  >
+    >
     <div className='post__box-profile'>
       <div className='post__flex'>
         {post?.profileUrl ? (
@@ -74,12 +74,18 @@ export default function Postbox({post}: PostBoxProps) {
         ) : (
           <FaUserCircle className="post__box-profile-icon"/>
         )}
-        <div className='post__email'>{post?.email}</div>
-        <div className='post__createdAt'>{post?.createdAt}</div>
+        <div className="post__flex--between">
+          <div className="post__flex">
+            <div className='post__email'>{post?.email}</div>
+            <div className='post__createdAt'>{post?.createdAt}</div>
+          </div>
+        </div>
+        <FollowingBox post={post}/>
+        <button className="post__following-btn">Following</button>
       </div>
-      <div className='post__box-content'>{post?.content}</div>
+      <div className='post__box-content' onClick={() => router.push(`/posts/${post.id}`)}>{post?.content}</div>
         {post?.imageUrl && (
-          <div className="post__image-div">
+          <div className="post__image-div" onClick={() => router.push(`/posts/${post.id}`)}>
             <img
               src={post?.imageUrl}
               alt="post img"

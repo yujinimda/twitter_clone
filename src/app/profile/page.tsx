@@ -7,35 +7,51 @@ import { db } from "@/app/firebaseApp";
 import { PostProps } from "@/types/post";
 import { useRouter } from "next/navigation";
 import Postbox from "../../../components/post/PostBox";
-import { useRecoilState } from "recoil";
-import { languageState } from "@/atom";
+import useLanguageStore from "@/stores/useLanguageStore";
+import { localeText } from "@/constants/locale"; 
 
 const PROFILE_DEFAULT_URL = "/vercel.svg";
 
 export default function ProfilePage() {
+  const [activeTab, setActiveTab] = useState<"foryou"|"likes">("foryou")
   const [posts, setPosts] = useState<PostProps[]>([]);
   const router = useRouter();
   const { user } = useContext(AuthContext);
-  const [language, setLanguage] = useRecoilState(languageState);
+  const { language, toggleLanguage } = useLanguageStore();
+  const t = localeText[language];
 
+  //로그인한 사용자의 게시글을 파이어베이스 파이어스토어에서 실시간으로 가져오는코드
   useEffect(() => {
     if (user) {
-      let postsRef = collection(db, "posts");
-      let postsQuery = query(
-        postsRef,
-        where("uid", "==", user.uid),
-        orderBy("createdAt", "desc")
-      );
-
-      onSnapshot(postsQuery, (snapShot) => {
-        let dataObj = snapShot.docs.map((doc) => ({
+      const postsRef = collection(db, "posts");
+      let postsQuery;
+  
+      if (activeTab === "foryou") {
+        postsQuery = query(
+          postsRef,
+          where("uid", "==", user.uid),
+          orderBy("createdAt", "desc")
+        );
+      } else if (activeTab === "likes") {
+        postsQuery = query(
+          postsRef,
+          where("likes", "array-contains", user.uid),
+          orderBy("createdAt", "desc")
+        );
+      }
+  
+      onSnapshot(postsQuery, (snapShot: any) => {
+        const dataObj = snapShot.docs.map((doc: any) => ({
           ...doc.data(),
-          id: doc?.id,
+          id: doc.id,
         }));
         setPosts(dataObj as PostProps[]);
       });
     }
-  }, [user]);
+  }, [user, activeTab]);
+  
+  
+  
 
   return (
     <div className="home">
@@ -55,15 +71,15 @@ export default function ProfilePage() {
               className="profile__btn"
               onClick={() => router.push("/profile/edit")}
             >
-              프로필 수정
+              {t.profileEdit}
             </button>
             <button
-                type="button"
-                className="profile__btn--language"
-                //onClick={onClickLanguage}
-              >
-                {language === "ko" ? "한국어" : "English"}
-            </button>
+              type="button"
+              className="profile__btn--language"
+              onClick={toggleLanguage}
+            >
+              {language === "ko" ? "English" : "한국어"}
+          </button>
           </div>
         </div>
         <div className="profile__text">
@@ -71,8 +87,16 @@ export default function ProfilePage() {
           <div className="profile__email">{user?.email}</div>
         </div>
         <div className="home__tabs">
-          <div className="home__tab home__tab--active">For You</div>
-          <div className="home__tab">Likes</div>
+          <div
+            className= {`home__tab ${activeTab === "foryou" ? "home__tab--active" : "" }`}
+            onClick={() => setActiveTab("foryou")}
+            >For You
+          </div>
+          <div
+            className= {`home__tab ${activeTab === "likes" ? "home__tab--active" : "" }`}
+            onClick={() => setActiveTab("likes")}
+            >Likes
+          </div>
         </div>
         <div className="post">
           {posts?.length > 0 ? (

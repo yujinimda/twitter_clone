@@ -6,6 +6,8 @@ import { app } from '../../src/app/firebaseApp'
 import Link from "next/link";
 import {toast} from "react-toastify"
 // import { FirebaseApp } from 'firebase/app';
+import useLanguageStore from "@/stores/useLanguageStore";
+import { localeText } from "@/constants/locale";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -14,6 +16,10 @@ export default function SignupForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+
+
+  const { language } = useLanguageStore();
+  const t = localeText[language]; // 언어 텍스트 셋
 
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -104,7 +110,7 @@ export default function SignupForm() {
   
   return (
     <form className="form form--lg" onSubmit={onSubmit}>
-      <div className="form__title">회원가입</div>
+      <div className="form__title">{t.signup}</div>
 
       <div className="form__block">
         <label htmlFor="email">이메일</label>

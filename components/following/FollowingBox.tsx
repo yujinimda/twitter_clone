@@ -107,14 +107,14 @@ export default function FollowingBox({ post }: FollowingProps) {
             type="button"
             className="post__following-btn"
             onClick={onClickDeleteFollow}
-          > Following
+          > Follower
           </button>
         ) : (
           <button
             type="button"
             className="post__follow-btn"
             onClick={onClickFollow}
-          > Follower
+          > Following
           </button>
         ))}
     </>

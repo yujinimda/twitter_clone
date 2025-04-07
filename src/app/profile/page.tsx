@@ -4,9 +4,11 @@ import { useContext, useEffect, useState } from "react";
 import AuthContext from "@/context/AuthContext";
 import {collection, onSnapshot, orderBy, query,  where} from "firebase/firestore";
 import { db } from "@/app/firebaseApp";
-import { PostProps } from '@/app/page';
+import { PostProps } from "@/types/post";
 import { useRouter } from "next/navigation";
 import Postbox from "../../../components/post/PostBox";
+import { useRecoilState } from "recoil";
+import { languageState } from "@/atom";
 
 const PROFILE_DEFAULT_URL = "/vercel.svg";
 
@@ -14,6 +16,7 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState<PostProps[]>([]);
   const router = useRouter();
   const { user } = useContext(AuthContext);
+  const [language, setLanguage] = useRecoilState(languageState);
 
   useEffect(() => {
     if (user) {
@@ -46,13 +49,22 @@ export default function ProfilePage() {
             width={100}
             height={100}
           />
-          <button
-            type="button"
-            className="profile__btn"
-            onClick={() => router.push("/profile/edit")}
-          >
-            프로필 수정
-          </button>
+          <div className="profile__flex">
+            <button
+              type="button"
+              className="profile__btn"
+              onClick={() => router.push("/profile/edit")}
+            >
+              프로필 수정
+            </button>
+            <button
+                type="button"
+                className="profile__btn--language"
+                //onClick={onClickLanguage}
+              >
+                {language === "ko" ? "한국어" : "English"}
+            </button>
+          </div>
         </div>
         <div className="profile__text">
           <div className="profile__name">{user?.displayName || "사용자님"}</div>

@@ -81,7 +81,7 @@ export default function Postbox({post}: PostBoxProps) {
           </div>
         </div>
         <FollowingBox post={post}/>
-        <button className="post__following-btn">Following</button>
+        {/* <button className="post__following-btn">Following</button> */}
       </div>
       <div className='post__box-content' onClick={() => router.push(`/posts/${post.id}`)}>{post?.content}</div>
         {post?.imageUrl && (

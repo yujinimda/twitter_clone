@@ -8,6 +8,7 @@ import { getAuth, signOut} from "firebase/auth"
 import { app } from '../src/app/firebaseApp'
 import { toast } from "react-toastify";
 import { IoSearch } from "react-icons/io5";
+import { IoMdNotificationsOutline } from "react-icons/io";
 
 export default function MenuList() {
   const router = useRouter(); 
@@ -26,6 +27,10 @@ export default function MenuList() {
         <button type="button" onClick={() => router.push("/search")}>
         <IoSearch />
           search
+        </button>
+        <button type="button" onClick={() => router.push("/notifications")}>
+        <IoMdNotificationsOutline />
+          notifications
         </button>
         <button
           type="button"

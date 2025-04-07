@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import {arrayRemove, arrayUnion, doc, onSnapshot} from "firebase/firestore";
+import {addDoc, arrayRemove, arrayUnion, collection, doc, onSnapshot, setDoc, updateDoc} from "firebase/firestore";
 import { useState, useCallback, useContext, useEffect,  } from "react";
-import {setDoc, updateDoc} from "firebase/firestore";
 
 import { toast } from "react-toastify";
 import { PostProps } from "@/app/page";
@@ -32,7 +31,7 @@ export default function FollowingBox({ post }: FollowingProps) {
         await setDoc(
           followingRef,
           {
-            users: arrayUnion({ id: post?.uid }),
+            users: arrayUnion(post?.uid),
           },
           { merge: true }
         );
@@ -42,9 +41,22 @@ export default function FollowingBox({ post }: FollowingProps) {
 
         await setDoc(
           followerRef,
-          { users: arrayUnion({ id: user?.uid }) },
+          { users: arrayUnion(user?.uid) },
           { merge: true }
         );
+
+        //팔로잉 알림
+         await addDoc(collection(db, "notifications"), {
+          createdAt: new Date()?.toLocaleDateString("ko", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+          content: `${user?.email || user?.displayName}가 팔로우를 했습니다.`,
+          url: "#",
+          isRead: false,
+          uid: post?.uid, //팔로우를 누른사람
+        });
 
         toast.success("팔로우를 했습니다");
       }
@@ -59,12 +71,12 @@ export default function FollowingBox({ post }: FollowingProps) {
       if (user?.uid) {
         const followingRef = doc(db, "following", user?.uid);
         await updateDoc(followingRef, {
-          users: arrayRemove({ id: post?.uid }),
+          users: arrayRemove(post?.uid),
         });
 
         const followerRef = doc(db, "follower", post?.uid);
         await updateDoc(followerRef, {
-          users: arrayRemove({ id: user.uid }),
+          users: arrayRemove(user.uid),
         });
         toast.success("팔로우를 취소했습니다.");
       }
@@ -73,20 +85,14 @@ export default function FollowingBox({ post }: FollowingProps) {
     }
   };
 
-  const getFollowers = useCallback(async () => {
-    if (post.uid) {
-      const ref = doc(db, "follower", post.uid);
-      onSnapshot(ref, (doc) => {
-        setPostFollowers([]);
-        doc
-          ?.data()
-          ?.users?.map((user: UserProps) =>
-            setPostFollowers((prev: UserProps[]) =>
-              prev ? [...prev, user?.id] : []
-            )
-          );
-      });
-    }
+  const getFollowers = useCallback(() => {
+    if (!post.uid) return;
+    const ref = doc(db, "follower", post.uid);
+  
+    onSnapshot(ref, (docSnap) => {
+      const users = docSnap?.data()?.users || [];
+      setPostFollowers(users); // 바로 string[]로 설정
+    });
   }, [post.uid]);
 
   useEffect(() => {
